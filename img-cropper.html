@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Crop your images online for free with our responsive, SEO-friendly image cropper tool. Supports JPG, PNG, WebP formats.">
+  <meta name="keywords" content="image cropper, crop image online, photo crop, image resize and crop, image editor online">
+  <meta name="author" content="Your Name">
+  <title>Online Image Cropper Tool – Free & Easy to Use</title>
+
+  <!-- Google Analytics GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-497456934"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-497456934');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421"
+    crossorigin="anonymous"></script>
+
+  <!-- CropperJS CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f2f3f7;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #222;
+      margin-bottom: 20px;
+    }
+
+    .tool-container {
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+    }
+
+    img#image {
+      max-width: 100%;
+      max-height: 500px;
+      margin-top: 15px;
+      display: none;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      padding: 10px 16px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .ad-container {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Online Image Cropper</h1>
+
+  <div class="ad-container">
+    <!-- Ad Unit -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3553963583441421"
+         data-ad-slot="1268420376"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <div class="tool-container">
+    <label for="upload">Upload an Image</label>
+    <input type="file" id="upload" accept="image/*" />
+    <img id="image" alt="Uploaded image for cropping" />
+    <br>
+    <button onclick="cropImage()">Crop & Download</button>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <footer>
+    &copy; 2025 Image Tools – All rights reserved.
+  </footer>
+
+  <script>
+    let cropper;
+    const image = document.getElementById('image');
+
+    document.getElementById('upload').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        image.src = event.target.result;
+        image.style.display = 'block';
+
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(image, {
+          aspectRatio: NaN,
+          viewMode: 1,
+          responsive: true,
+          background: false,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function cropImage() {
+      if (!cropper) return alert("Please upload and select an area first.");
+
+      const canvas = cropper.getCroppedCanvas({
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high'
+      });
+
+      canvas.toBlob(function (blob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "cropped-image.png";
+        a.click();
+      }, 'image/png');
+    }
+  </script>
+</body>
+</html>

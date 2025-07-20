@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Convert PDF to Word (DOCX) for free online. No signup, no backend. Fast and secure PDF to Word converter in-browser." />
+  <meta name="keywords" content="PDF to Word, Convert PDF, Online Converter, Free PDF to DOCX" />
+  <meta name="author" content="YourName" />
+  <title>PDF to Word Converter | Free & Fast</title>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PDF to Word Converter",
+    "applicationCategory": "Utility",
+    "operatingSystem": "All",
+    "url": "https://yourdomain.com/pdf-to-word",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-497456934"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-497456934');
+  </script>
+
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421"
+     crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    header {
+      background-color: #28a745;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem 1rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-size: 1rem;
+    }
+
+    .output {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .ads {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>PDF to Word Converter</h1>
+  <p>Convert PDF files to editable Word documents instantly – 100% free & secure.</p>
+</header>
+
+<main>
+  <label for="pdfInput">Choose your PDF file:</label>
+  <input type="file" id="pdfInput" accept="application/pdf" />
+
+  <button onclick="convertPDFtoWord()">Convert to Word (DOCX)</button>
+
+  <div class="output" id="output"></div>
+
+  <div class="ads">
+    <!-- AdSense Block -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3553963583441421"
+         data-ad-slot="1268420376"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+</main>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://unpkg.com/pdfjs-dist/build/pdf.min.js"></script>
+<script src="https://unpkg.com/docx@8.3.0/build/index.umd.js"></script>
+
+<script>
+async function convertPDFtoWord() {
+  const file = document.getElementById('pdfInput').files[0];
+  const output = document.getElementById('output');
+  if (!file) return alert("Please upload a PDF file first.");
+
+  output.innerHTML = "Processing PDF... Please wait.";
+
+  const pdfData = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+  const totalPages = pdf.numPages;
+  let allText = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const text = content.items.map(item => item.str).join(" ");
+    allText.push(`Page ${i}:\n${text}\n\n`);
+  }
+
+  // Create Word Doc
+  const doc = new docx.Document({
+    sections: [
+      {
+        properties: {},
+        children: allText.map(pageText => new docx.Paragraph({
+          children: [new docx.TextRun({ text: pageText, break: 2 })]
+        }))
+      }
+    ]
+  });
+
+  const blob = await docx.Packer.toBlob(doc);
+  const url = URL.createObjectURL(blob);
+  output.innerHTML = `<a href="${url}" download="converted.docx">Download Converted Word File</a>`;
+}
+</script>
+
+</body>
+</html>

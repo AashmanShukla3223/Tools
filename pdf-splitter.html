@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Split PDF Files Online – Extract all pages from a PDF into separate files. Fast, secure, and fully frontend." />
+  <title>PDF Splitter – Break PDF into Individual Pages</title>
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 30px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 20px auto;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      background-color: #0066ff;
+      color: white;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004cb3;
+    }
+    .output {
+      text-align: center;
+      margin-top: 20px;
+      color: green;
+    }
+    .ad-container {
+      margin-top: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PDF Splitter</h1>
+    <p style="text-align:center;">Upload a PDF and split it into separate files by page. Works entirely in your browser.</p>
+    
+    <input type="file" id="pdfFile" accept="application/pdf" />
+    <button onclick="splitPDF()">Split PDF</button>
+
+    <div class="output" id="output"></div>
+
+    <!-- Google AdSense Ad Unit -->
+    <div class="ad-container">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421" crossorigin="anonymous"></script>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3553963583441421"
+           data-ad-slot="1268420376"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <script>
+    async function splitPDF() {
+      const fileInput = document.getElementById('pdfFile');
+      const output = document.getElementById('output');
+
+      if (!fileInput.files.length) {
+        output.textContent = 'Please select a PDF file to split.';
+        return;
+      }
+
+      const file = fileInput.files[0];
+      output.textContent = 'Splitting PDF... Please wait.';
+
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      const totalPages = pdfDoc.getPageCount();
+
+      for (let i = 0; i < totalPages; i++) {
+        const newPdf = await PDFLib.PDFDocument.create();
+        const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+        newPdf.addPage(copiedPage);
+        const pdfBytes = await newPdf.save();
+
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `page-${i + 1}.pdf`;
+        link.textContent = `Download Page ${i + 1}`;
+        link.style.display = 'block';
+        link.style.marginBottom = '10px';
+
+        output.appendChild(link);
+      }
+
+      output.insertAdjacentHTML('afterbegin', `<p>Successfully split ${totalPages} pages.</p>`);
+    }
+  </script>
+</body>
+</html>

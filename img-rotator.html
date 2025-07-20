@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Rotate images online with this free image rotator tool. Rotate left or right and download your photo instantly." />
+  <meta name="keywords" content="image rotator, rotate image online, rotate photo, rotate left, rotate right, photo editor" />
+  <meta name="author" content="Your Name">
+  <title>Image Rotator – Rotate Your Image Left or Right</title>
+
+  <!-- GA4 Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-497456934"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-497456934');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421"
+          crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9fafc;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .tool-container {
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 15px;
+    }
+
+    #canvas {
+      max-width: 100%;
+      margin: 20px 0;
+      display: none;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .ad-container {
+      margin: 20px 0;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Online Image Rotator</h1>
+
+  <div class="ad-container">
+    <!-- AdSense Ad -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3553963583441421"
+         data-ad-slot="1268420376"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <div class="tool-container">
+    <input type="file" id="upload" accept="image/*" />
+    <br/>
+    <canvas id="canvas"></canvas>
+    <br/>
+    <button onclick="rotateImage(-90)">Rotate Left ⟲</button>
+    <button onclick="rotateImage(90)">Rotate Right ⟳</button>
+    <button onclick="downloadImage()">Download</button>
+  </div>
+
+  <footer>&copy; 2025 Image Tools – All rights reserved.</footer>
+
+  <script>
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    let img = new Image();
+    let currentRotation = 0;
+
+    document.getElementById('upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        img.onload = function() {
+          currentRotation = 0;
+          drawImage();
+        };
+        img.src = evt.target.result;
+        canvas.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function drawImage() {
+      const angle = currentRotation * Math.PI / 180;
+      const w = img.width;
+      const h = img.height;
+
+      const rotated = currentRotation % 180 !== 0;
+      canvas.width = rotated ? h : w;
+      canvas.height = rotated ? w : h;
+
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(angle);
+      ctx.drawImage(img, -w / 2, -h / 2);
+      ctx.restore();
+    }
+
+    function rotateImage(degree) {
+      if (!img.src) return alert("Upload an image first.");
+      currentRotation = (currentRotation + degree) % 360;
+      drawImage();
+    }
+
+    function downloadImage() {
+      if (!img.src) return alert("Upload and rotate image first.");
+      const link = document.createElement('a');
+      link.download = "rotated-image.png";
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+
+</body>
+</html>

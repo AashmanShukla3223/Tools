@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Convert PDF pages to images (PNG) instantly. 100% client-side with no upload. Free and secure." />
+  <title>PDF to Image Converter – Convert PDF to PNG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 30px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 20px auto;
+    }
+    button {
+      background: #0099ff;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+    button:hover {
+      background: #007acc;
+    }
+    canvas {
+      display: none;
+    }
+    .image-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .image-links a {
+      display: block;
+      margin: 10px 0;
+    }
+    .ad-container {
+      margin-top: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PDF to Image Converter</h1>
+    <p style="text-align:center;">Upload a PDF file and convert each page into an image (PNG format). No upload – everything happens on your device.</p>
+    <input type="file" id="pdfUpload" accept="application/pdf" />
+    <button onclick="convertPDFtoImages()">Convert</button>
+
+    <div class="image-links" id="output"></div>
+
+    <!-- Google AdSense Ad Unit -->
+    <div class="ad-container">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421" crossorigin="anonymous"></script>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3553963583441421"
+           data-ad-slot="1268420376"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <canvas id="pdfCanvas"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    async function convertPDFtoImages() {
+      const fileInput = document.getElementById('pdfUpload');
+      const output = document.getElementById('output');
+      const canvas = document.getElementById('pdfCanvas');
+      const ctx = canvas.getContext('2d');
+
+      output.innerHTML = '';
+
+      if (!fileInput.files.length) {
+        output.textContent = 'Please upload a PDF file first.';
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const fileReader = new FileReader();
+
+      fileReader.onload = async function() {
+        const typedarray = new Uint8Array(this.result);
+        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+        const pdf = await loadingTask.promise;
+        const totalPages = pdf.numPages;
+
+        for (let i = 1; i <= totalPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2 });
+
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          canvas.toBlob(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `page-${i}.png`;
+            link.textContent = `Download Page ${i} as PNG`;
+            output.appendChild(link);
+          }, 'image/png');
+        }
+
+        output.insertAdjacentHTML('afterbegin', `<p>Converted ${totalPages} pages to PNG images.</p>`);
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    }
+  </script>
+</body>
+</html>
