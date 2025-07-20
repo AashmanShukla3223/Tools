@@ -3,110 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Merge PDF Files Online – Combine multiple PDFs into one. Fully frontend, no uploads, secure & fast." />
-  <title>PDF Merger-Combine Multiple PDFs Online</title>
-  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 30px;
-    }
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #222;
-    }
-    input[type="file"] {
-      display: block;
-      margin: 20px auto;
-    }
-    button {
-      display: block;
-      margin: 20px auto;
-      background-color: #0066ff;
-      color: white;
-      padding: 10px 25px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #004cb3;
-    }
-    .output {
-      text-align: center;
-      margin-top: 20px;
-      color: green;
-    }
-    .ad-container {
-      margin-top: 30px;
-      text-align: center;
-    }
-  </style>
+  <title>PDF Merger</title>
 </head>
-<body>
-  <div class="container">
-    <h1>PDF Merger</h1>
-    <p style="text-align:center;">Upload multiple PDF files to merge into one document. No data leaves your browser.</p>
-    
-    <input type="file" id="pdf-files" accept="application/pdf" multiple />
-    <button onclick="mergePDFs()">Merge PDFs</button>
-    
-    <div class="output" id="output-msg"></div>
+<body style="font-family:sans-serif; padding:20px;">
+  <h2>PDF Merger (Offline)</h2>
+  <input type="file" id="fileInput" multiple accept=".pdf"/>
+  <button onclick="mergePDFs()">Merge PDFs</button>
 
-    <!-- Google AdSense Ad Unit -->
-    <div class="ad-container">
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3553963583441421" crossorigin="anonymous"></script>
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-3553963583441421"
-           data-ad-slot="1268420376"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
   <script>
     async function mergePDFs() {
-      const files = document.getElementById("pdf-files").files;
-      const outputMsg = document.getElementById("output-msg");
-
+      const input = document.getElementById('fileInput');
+      const files = Array.from(input.files);
       if (files.length < 2) {
-        outputMsg.textContent = "Please select at least 2 PDF files to merge.";
+        alert("Select at least two PDF files");
         return;
       }
 
-      outputMsg.textContent = "Merging... Please wait.";
-
       const mergedPdf = await PDFLib.PDFDocument.create();
 
-      for (let file of files) {
+      for (const file of files) {
         const bytes = await file.arrayBuffer();
         const pdf = await PDFLib.PDFDocument.load(bytes);
         const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        copiedPages.forEach((page) => mergedPdf.addPage(page));
+        copiedPages.forEach(page => mergedPdf.addPage(page));
       }
 
       const mergedPdfBytes = await mergedPdf.save();
-
-      const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "merged.pdf";
-      a.click();
-
-      outputMsg.textContent = "PDFs successfully merged!";
+      const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'merged.pdf';
+      link.click();
     }
   </script>
 </body>
