@@ -50,6 +50,23 @@
       margin: 10px 0 0;
       font-size: 1.1em;
     }
+    .tool.disabled {
+      pointer-events: none;
+      color: #aaa;
+      background: #eee;
+      border-style: dashed;
+    }
+    .tool.disabled:hover {
+      transform: none;
+      background: #eee;
+      border-color: #ccc;
+    }
+    .tool.disabled span {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.85em;
+      color: #999;
+    }
     @media (max-width: 600px) {
       .tool-grid {
         grid-template-columns: 1fr;
@@ -96,7 +113,7 @@
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ✅ Functional Tools Only -->
+    <!-- ✅ Functional & Coming Soon Tools -->
     <div class="tool-grid">
       <!-- Image Tools -->
       <a href="/Tools/img-convertor.html" class="tool"><h3>Image Converter</h3></a>
@@ -109,6 +126,20 @@
       <a href="/Tools/pdf-to-image-convertor.html" class="tool"><h3>PDF to Image</h3></a>
       <a href="/Tools/pdf-to-word-convertor.html" class="tool"><h3>PDF to Word</h3></a>
       <a href="/Tools/word-to-pdf-convertor.html" class="tool"><h3>Word to PDF</h3></a>
+
+      <!-- 🚧 Under Construction -->
+      <div class="tool disabled">
+        <h3>PDF Compressor</h3>
+        <span>Coming Soon</span>
+      </div>
+      <div class="tool disabled">
+        <h3>PDF Merger</h3>
+        <span>Coming Soon</span>
+      </div>
+      <div class="tool disabled">
+        <h3>PDF Splitter</h3>
+        <span>Coming Soon</span>
+      </div>
     </div>
 
     <!-- 📢 Bottom AdSense Ad -->
